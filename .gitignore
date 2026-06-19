@@ -2,48 +2,107 @@
 .Rhistory
 .Rapp.history
 
-# Session Data files
+# Session data files
 .RData
 .RDataTmp
-
-# User-specific files
 .Ruserdata
 
-# Example code in package build process
-*-Ex.R
-
-# Output files from R CMD build
+# Output files 
 /*.tar.gz
-
-# Output files from R CMD check
 /*.Rcheck/
 
 # RStudio files
 .Rproj.user/
+*.Rproj
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
-
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+# OAuth2 tokens
 .httr-oauth
 
-# knitr and R markdown default cache directories
+# knitr and R Markdown cache directories
 *_cache/
 /cache/
+cache/
 
-# Temporary files created by R markdown
+# Temporary files created by R Markdown
 *.utf8.md
 *.knit.md
 
-# R Environment Variables
+# R environment variables
 .Renviron
 
 # pkgdown site
 docs/
 
-# translation temp files
+# Translation temp files
 po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Data directories
+data/
+raw/
+processed/
+intermediate/
+derived/
+
+# Output directories
+results/
+result/
+outputs/
+output/
+figures/
+figure/
+plots/
+plot/
+tables/
+table/
+logs/
+log/
+
+# Data files
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.rds
+*.rda
+*.RData
+*.sav
+*.dta
+*.sas7bdat
+*.parquet
+*.feather
+*.json
+
+# Output / report files
+*.log
+*.pdf
+*.html
+*.docx
+*.pptx
+
+# Image files
+*.png
+*.jpg
+*.jpeg
+*.tiff
+*.tif
+*.svg
+
+# Compressed files
+*.zip
+*.tar
+*.tar.gz
+*.gz
+*.7z
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Secrets and credentials
+*.key
+*.pem
+.env
+.Renviron
