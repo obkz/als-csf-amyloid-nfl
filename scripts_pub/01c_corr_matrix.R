@@ -347,6 +347,7 @@ n_fab  <- nobs(lm_fab_als)
 # MMSE and FAB regression tables for ALS only, merged side by side
 tbl_mmse_als <- tbl_regression(
   lm_mmse_als,
+  pvalue_fun = ~ style_pvalue(.x, digits = 2),
   label = list(
     Ab42_40_csf_bridged_100scaled ~ "CSF A\u03b242/40 (per 0.01 increase)",
     Age_init                   ~ "Age at baseline",
@@ -358,6 +359,7 @@ tbl_mmse_als <- tbl_regression(
 
 tbl_fab_als <- tbl_regression(
   lm_fab_als,
+  pvalue_fun = ~ style_pvalue(.x, digits = 2),
   label = list(
     Ab42_40_csf_bridged_100scaled ~ "CSF A\u03b242/40 (per 0.01 increase)",
     Age_init                   ~ "Age at baseline",

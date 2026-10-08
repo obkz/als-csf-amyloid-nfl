@@ -524,3 +524,43 @@ Fig1 <- (result_bw3_ab$plot|result_bw3_ab_blood$plot) +
   plot_layout(widths = c(3, 1))
 
 Fig1
+
+# QC ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+biomarkers_fig1 <- c(
+  "Ab42_40_csf_bridged", "Ab38_40_csf",
+  "pTau217_csf", "pTau181_csf",
+  "GFAP_csf_pgml", "NfL_csf_pgml",
+  "Cr", "CK"
+)
+
+n_summary_tbl <- T1 %>%
+  filter(!is.na(Apos_label)) %>%
+  select(Apos_label, all_of(biomarkers_fig1)) %>%
+  pivot_longer(
+    cols = all_of(biomarkers_fig1),
+    names_to = "biomarker_nm",
+    values_to = "value_num"
+  ) %>%
+  group_by(biomarker_nm, Apos_label) %>%
+  summarise(
+    n_total   = n(),
+    n_missing = sum(is.na(value_num)),
+    n_valid   = sum(!is.na(value_num)),
+    .groups = "drop"
+  )
+
+qc_check_tbl <- n_summary_tbl %>%
+  mutate(qc_ok = (n_valid + n_missing) == n_total)
+stopifnot(all(qc_check_tbl$qc_ok))
+
+missing_flag_tbl <- n_summary_tbl %>%
+  group_by(biomarker_nm) %>%
+  summarise(has_missing = any(n_missing > 0), .groups = "drop")
+missing_flag_tbl
+
+n_summary_wide <- n_summary_tbl %>%
+  select(biomarker_nm, Apos_label, n_valid) %>%
+  pivot_wider(names_from = Apos_label, values_from = n_valid)
+
+n_summary_wide

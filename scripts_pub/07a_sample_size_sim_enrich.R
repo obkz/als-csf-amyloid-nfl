@@ -15,14 +15,12 @@ library(ggsci)
 # Assumes df_slope_model exists in the environment and contains:
 #   - numeric 'slope_total' (ALSFRS-R slope per patient)
 #   - numeric 'cNfL' (for quantile-based enrichment)
-
+# Using the same dataset as the regression pipeline for consistency. [glm_subset_results$nested]
 
 df0 <- df_slope_model %>%
-  dplyr::filter(
-    !is.na(slope_total),
-    !is.na(NfL_csf_pgml),
-    !R_ElEscorial %in% c("suspected")
-  ) %>%
+  dplyr::select(SSBS_ID, slope_total, NfL_csf_pgml, all_of(predictors_reg)) %>%
+  tidyr::drop_na(all_of(predictors_reg)) %>%
+  dplyr::filter(!is.na(slope_total),!is.na(NfL_csf_pgml)) %>%
   dplyr::mutate(
     quartile_cNfL = dplyr::ntile(NfL_csf_pgml, 4),
     quartile_cNfL = factor(

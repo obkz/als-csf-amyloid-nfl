@@ -87,4 +87,4 @@ cat("Median survival (months) Bologna:", med_surv_ext, "\n")
 # 🔍 SuppleFig12 ------------------------------------------------------------------
 
 SuppleFig12 <- SuppleFig12_added
-
+SuppleFig12 
