@@ -1212,14 +1212,16 @@ plot_repeat_roc <- function(oof_preds, rep_id,
 # ---- Pretty ensemble ROC (mean over repeats) ----
 plot_ensemble_roc <- function(
     oof_mean,
-    colormap = NULL,          # option
+    ci_df = NULL,
+    colormap = NULL,
+    model_order = NULL,        
     neg_class = "nonALS", pos_class = "ALS",
     smooth = FALSE, legacy_axes = TRUE, line_size = 0.9,
     title = "Ensemble ROC (mean over repeats)",
-    model_labels = c(                      # option
+    model_labels = c(
       "NfLonly" = "NfL alone"
     ),
-    show_auc_in_legend = TRUE              # TRUE
+    show_auc_in_legend = TRUE
 ) {
   models  <- sort(unique(oof_mean$model))
   roc_list <- list()
@@ -1238,19 +1240,40 @@ plot_ensemble_roc <- function(
     
     auc_val  <- as.numeric(pROC::auc(r))
     pretty_m <- if (m %in% names(model_labels)) model_labels[[m]] else m
-    label    <- if (show_auc_in_legend) sprintf("%s (AUC=%.2f)", pretty_m, auc_val) else pretty_m
+    
+    if (!is.null(ci_df) && m %in% ci_df$model) {
+      ci_row   <- ci_df[ci_df$model == m, ]
+      ci_lower <- ci_row$AUC_lower
+      ci_upper <- ci_row$AUC_upper
+    } else {
+      ci_delong <- as.numeric(pROC::ci.auc(r))
+      ci_lower  <- ci_delong[1]
+      ci_upper  <- ci_delong[3]
+    }
+    
+    label <- if (show_auc_in_legend) {
+      sprintf("%s: AUC=%.2f (%.2f\u2013%.2f)", pretty_m, auc_val, ci_lower, ci_upper)
+    } else {
+      pretty_m
+    }
     
     roc_list[[label]] <- r
     auc_df <- dplyr::bind_rows(
       auc_df,
-      tibble::tibble(model = m, pretty_model = pretty_m, AUC = auc_val, label = label)
+      tibble::tibble(model = m, pretty_model = pretty_m, AUC = auc_val,
+                     AUC_lower = ci_lower, AUC_upper = ci_upper, label = label)
     )
   }
   
   if (length(roc_list) == 0L) stop("No valid ROC curves to plot for ensemble.")
   
-  # Legend order = AUC descending
-  auc_df <- auc_df %>% dplyr::arrange(dplyr::desc(AUC))
+  if (!is.null(model_order)) {
+    auc_df <- auc_df %>%
+      dplyr::mutate(pretty_model = factor(pretty_model, levels = model_order)) %>%
+      dplyr::arrange(pretty_model)
+  } else {
+    auc_df <- auc_df %>% dplyr::arrange(dplyr::desc(AUC))
+  }
   ordered_labels <- auc_df$label
   
   gp <- pROC::ggroc(roc_list, legacy.axes = legacy_axes, size = line_size) +
@@ -1261,10 +1284,10 @@ plot_ensemble_roc <- function(
       color = "Model"
     ) +
     ggplot2::theme_classic(base_size = 16) +
-    ggplot2::theme(plot.title = ggplot2::element_text(face = "bold")) 
+    ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
   
   if (!is.null(colormap)) {
-    base_names <- sub(" \\(AUC=.*\\)$", "", ordered_labels)
+    base_names <- sub(":.*$", "", ordered_labels)
     values_vec <- unname(colormap[base_names])
     if (any(is.na(values_vec))) {
       warning("Some models missing in colormap; using default palette for those.")
@@ -1278,7 +1301,6 @@ plot_ensemble_roc <- function(
   
   list(plot = gp, auc_table = auc_df, roc_list = roc_list)
 }
-
 
 # ---- Choose representative repeat across ALL models ----
 # oof_summary: tibble with columns [model, iter, AUC] 
