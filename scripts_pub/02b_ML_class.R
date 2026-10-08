@@ -190,7 +190,7 @@ ensemble_eval <- evaluate_ensemble_with_progress(
 
 ensemble_eval 
 
-ROC_ML_1step_mean_Pub <- oof_mean %>% plot_ensemble_roc(colormap = ml_colors,
+ROC_ML_1step_mean_Pub <- oof_mean %>% plot_ensemble_roc(colormap = ml_colors, ci_df=ensemble_eval, model_order = c("RF", "XGB", "SVM", "KNN", "GLM", "NfL alone"),
                                                         title="Ensemble OOF ROC (based on mean predicted value of all repeats)")
 
 ROC_ML_1step_mean_Pub <- ROC_ML_1step_mean_Pub$plot+
@@ -287,7 +287,7 @@ Fig2E_pub <- p_rf_class +
   theme_bw(base_size = 16) +
   labs(
     title = "SHAP summary plot for RF model",
-    y = "SHAP value (impact on model output)"
+    y = "SHAP value"
   ) +
   theme(
     plot.title   = element_text(size = 18, face = "bold"),
@@ -415,8 +415,8 @@ Fig2F_pub <- ggplot(rank_plot_norm,
   geom_col(position = "dodge", color="gray95", linewidth = 0.2, alpha=0.8) +
   scale_x_discrete(labels = function(x) ifelse(x %in% names(variable_label_map), variable_label_map[x], x))+
   coord_flip() +
-  labs(title = "Normalized |SHAP| across repeats",
-       x = NULL, y = "Normalized |SHAP|") +
+  labs(title = "Normalised |SHAP| across repeats",
+       x = NULL, y = "Normalised |SHAP|") +
   theme_bw(base_size = 16) +
   theme(
     plot.title   = element_text(size = 18, face = "bold", margin=ggplot2::margin(b=15)),
@@ -424,7 +424,8 @@ Fig2F_pub <- ggplot(rank_plot_norm,
     axis.title.x  = element_text(size=16, margin=ggplot2::margin(t=15,b=-10)),
     axis.text.y  = element_text(size = 14),
     axis.text.x  = element_text(size = 14),
-    legend.text  = element_text(size = 12),
+    legend.title = element_text(size = 12),
+    legend.text  = element_text(size = 10),
   )+
   scale_fill_manual(values = ml_colors) +
   theme(legend.position = "bottom")

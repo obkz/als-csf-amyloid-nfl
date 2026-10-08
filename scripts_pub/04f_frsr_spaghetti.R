@@ -23,7 +23,7 @@ theme_pub <- function() {
 }
 
 # 1) identify each subject’s baseline row (earliest visit)
-baseline_df <- visitdf %>%
+baseline_df <- df_vis %>% filter(ALS_label==1) %>%
   group_by(SSBS_ID) %>%
   arrange(DaysFromFirstVisit_months, .by_group = TRUE) %>%
   dplyr::slice(1) %>%
@@ -35,12 +35,12 @@ baseline_df <- visitdf %>%
     DiseaseDuration_M,
     deltaFS,
     tert_cNfL,
-    Ab_status, VC_Percent
+    Ab_status_bl, VC_Percent
   )
 
 
 # 2) label “fast vs slow” by median deltaFS among ALS only
-med_delta <- visitdf %>%
+med_delta <- df_vis %>%
   filter(ALS_label == 1) %>%
   group_by(SSBS_ID) %>%
   arrange(DaysFromFirstVisit_months, .by_group = TRUE) %>%
@@ -73,7 +73,7 @@ pseudo_onset <- baseline_df %>%
     ALSFRSR_Total    = 48,
     deltaFS_group,
     tert_cNfL,
-    Ab_status,
+    Ab_status_bl,
     VC_group,
     segment_type     = "pre"                   # tag for styling
   )
@@ -87,7 +87,7 @@ baseline_anchor <- baseline_df %>%
     ALSFRSR_Total    = ALSFRSR_baseline,
     deltaFS_group,
     tert_cNfL,
-    Ab_status,
+    Ab_status_bl,
     VC_group,
     segment_type     = "baseline"
   )
@@ -199,7 +199,7 @@ Fig4B <- ggplot() +
   ), na.value = "blank")+
   scale_color_manual(values = c(
     "low"  = "#65C2AE", 
-    "mid"  = "gray50",
+    "mid"  = "#84A6B8", #"gray50",
     "high" = "#E07B00" 
   ),na.translate = FALSE)+
   theme_pub()

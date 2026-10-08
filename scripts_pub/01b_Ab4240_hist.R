@@ -4,7 +4,7 @@ library(patchwork)
 
 AB_cutoff_value <- 0.077
 
-Ab_df_hist <- csfdf %>%
+Ab_df_hist <- csfdf %>% filter(!SampleID %in% second) %>% 
   select(Ab42_40_csf_bridged, Ab_status, Apos_label, ALS_label) %>%
   filter(is.finite(Ab42_40_csf_bridged)) %>%
   mutate(
@@ -20,6 +20,9 @@ Ab_df_hist <- csfdf %>%
                               "positive" = "Aβ (+)" ,
                               "negative" = "Aβ (-)")
   )
+
+Ab_df_hist |> filter(ALS_label=="ALS") # n=264
+Ab_df_hist |> filter(ALS_label=="DC")  # n=164
 
 base_theme_his <- theme_bw(base_size = 16) +
   theme(

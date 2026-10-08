@@ -321,6 +321,7 @@ ft_fp2_CoxSub
 ## 🔍 SuppleT12 ------------------------------------------------------------------
 
 SuppleT12_pub <- ft_fp2_CoxSub
+SuppleT12_pub
 
 # docx
 # SuppleT12_pub |> 
